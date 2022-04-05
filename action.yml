@@ -1,0 +1,62 @@
+name: 'Update Image Tag'
+description: 'Updates Kustomize image tags and creates a PR with the change'
+inputs:
+  repo:  
+    description: 'Repository where kustomization.yaml exists'
+    required: true
+    default: "jackpocket/jackpocket-infra"
+  path:
+    description: 'Path in repository where kustomization.yaml resides'
+    required: true
+  branch: 
+    description: 'Branch on the repository in which to apply the changes'
+    required: true
+    default: "main"
+  image-name:
+    description: 'Container image name'
+    required: true
+  tag:
+    description: 'Image tag - normally Github SHA'
+    required: true
+  token: 
+    description: "Github token - normal PAT"
+    required: true
+  source-repo: 
+    description: 'Source repository for the image that was built'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - uses: imranismail/setup-kustomize@v1
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        token: ${{ inputs.token }}
+        ref: ${{ inputs.branch }}
+        repository: ${{ inputs.repo }}
+        path: infra
+    - name: Kustomize
+      shell: bash
+      run: |
+        cd infra/${{ inputs.path }}
+        kustomize edit set image ${{ inputs.image-name }}=${{ inputs.image-name }}:${{ inputs.tag }}
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v4.0.0
+      with:
+        path: infra
+        token: ${{ inputs.token }}
+        delete-branch: true
+        branch-suffix: random
+        commit-message: Updating ${{ inputs.image }} tag to ${{ inputs.tag }}
+        title: "${{ inputs.image-name }} deployment to ${{ inputs.branch }} branch"
+        body: >
+            Related to https://github.com/${{ inputs.source-repo }}/commit/${{ inputs.tag }}
+
+
+            This PR is auto-generated. 
+        labels: automerge
+    - uses: actions/checkout@v3
+      with:
+        path: ${{ github.repository }}
+        fetch-depth: 0
+        clean: true

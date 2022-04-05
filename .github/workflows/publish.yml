@@ -1,0 +1,17 @@
+##
+# Publish new action tag(s) for downstream consumption
+##
+name: Publish
+
+# Manual or automatic release
+on:
+  release:
+    types: [published, edited]
+
+jobs:
+  actions-tagger:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: Actions-R-Us/actions-tagger@latest
+        with:
+          publish_latest_tag: true
