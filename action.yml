@@ -4,7 +4,6 @@ inputs:
   repo:  
     description: 'Repository where kustomization.yaml exists'
     required: true
-    default: "jackpocket/jackpocket-infra"
   path:
     description: 'Path in repository where kustomization.yaml resides'
     required: true
@@ -28,6 +27,7 @@ runs:
   using: "composite"
   steps:
     - uses: imranismail/setup-kustomize@v1
+
     - name: Checkout
       uses: actions/checkout@v3
       with:
@@ -35,11 +35,13 @@ runs:
         ref: ${{ inputs.branch }}
         repository: ${{ inputs.repo }}
         path: infra
+
     - name: Kustomize
       shell: bash
       run: |
         cd infra/${{ inputs.path }}
         kustomize edit set image ${{ inputs.image-name }}=${{ inputs.image-name }}:${{ inputs.tag }}
+
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v4.0.0
       with:
@@ -55,6 +57,7 @@ runs:
 
             This PR is auto-generated. 
         labels: automerge
+        
     - uses: actions/checkout@v3
       with:
         path: ${{ github.repository }}
