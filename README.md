@@ -47,7 +47,7 @@ jobs:
         branch: staging
         repo: organization/reponame
         tag: ${{ needs.build.outputs.build-sha }}
-        path: k8s/path/to/kustomization/dotyaml
+        path: k8s/path/to/folder # the directory path that contains the kustomiztion.yaml file
         image-name: gcr.io/iamagcpproject/imanimagename
         source-repo: ${{ github.repository }}
 ```
