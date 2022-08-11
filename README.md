@@ -41,7 +41,7 @@ jobs:
     - uses: actions/checkout@v3
     
     - name: Deploy
-      uses: jackpocket/update-image-tag-action@latest
+      uses: jackpocket/update-image-tag-action@v1
       with:
         token: ${{ secrets.GH_PAT }}
         branch: staging
