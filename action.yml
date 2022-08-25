@@ -23,6 +23,10 @@ inputs:
   source-repo: 
     description: 'Source repository for the image that was built'
     required: true
+  labels:
+    description: 'A comma or newline separated list of labels.'
+    required: true
+    default: "automerge"
 runs:
   using: "composite"
   steps:
@@ -56,7 +60,7 @@ runs:
 
 
             This PR is auto-generated. 
-        labels: automerge
+        labels: ${{ inputs.labels }}
         
     - uses: actions/checkout@v3
       with:
