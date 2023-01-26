@@ -1,53 +1,52 @@
 # update-image-tag-action
+
 Github Action to update image tag in kustomiztion.yaml
 
 ## Example Usage
 
 ```yaml
-name: build-image
+name: Deployment
 
 on:
   push:
-    branches: main
+    branches:
+      - main
 
 jobs:
-  build:
+  build_deploy_image:
     runs-on: ubuntu-latest
     outputs:
       build-sha: ${{ github.sha }}
     steps:
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
+      - uses: actions/checkout@v3
+      - uses: docker/login-action@v2
+        with:
+          registry: gcr.io
+          username: _json_key
+          password: ${{ secrets.YOUR_GCR_JSON_KEY }}
+      - uses: docker/setup-buildx-action@v2
+      - uses: docker/build-push-action@v3
+        with:
+          push: true
+          tags: gcr.io/iamagcpproject/imanimagename:${{ github.sha }}
 
-    - id: 'auth'
-      name: Login to GCR
-      uses: docker/login-action@v1
-      with:
-        registry: gcr.io
-        username: _json_key
-        password: ${{ secrets.GCR_JSON_KEY }}
-
-    - name: Build and push
-      uses: docker/build-push-action@v2
-      with:
-        push: true
-        tags: gcr.io/iamagcpproject/imanimagename:${{ github.sha }}
-        
-  deployment:
-    environment: staging
-    needs: build
+  create_update_tag_pr_staging:
     runs-on: ubuntu-latest
+    needs: build_deploy_image
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Deploy
-      uses: jackpocket/update-image-tag-action@v1
-      with:
-        token: ${{ secrets.GH_PAT }}
-        branch: staging
-        repo: organization/reponame
-        tag: ${{ needs.build.outputs.build-sha }}
-        path: k8s/path/to/folder # the directory path that contains the kustomiztion.yaml file
-        image-name: gcr.io/iamagcpproject/imanimagename
-        source-repo: ${{ github.repository }}
+      - uses: actions/checkout@v3
+      - uses: tibdex/github-app-token@v1
+        id: generate-token
+        with:
+          app_id: ${{ secrets.YOUR_GITHUB_APP_ID }}
+          private_key: ${{ secrets.YOUR_GITHUB_APP_PRIVATE_KEY }}
+      - uses: jackpocket/update-image-tag-action@v1
+        with:
+          token: ${{ steps.generate-token.outputs.token }}
+          branch: staging
+          repo: organization/reponame
+          tag: ${{ needs.build.outputs.build-sha }}
+          path: k8s/path/to/folder # the directory path that contains the kustomiztion.yaml file
+          image-name: gcr.io/iamagcpproject/imanimagename
+          source-repo: ${{ github.repository }}
 ```
