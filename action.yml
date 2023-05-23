@@ -1,13 +1,13 @@
 name: 'Update Image Tag'
 description: 'Updates Kustomize image tags and creates a PR with the change'
 inputs:
-  repo:  
+  repo:
     description: 'Repository where kustomization.yaml exists'
     required: true
   path:
     description: 'Path in repository where kustomization.yaml resides'
     required: true
-  branch: 
+  branch:
     description: 'Branch on the repository in which to apply the changes'
     required: true
     default: "main"
@@ -17,10 +17,10 @@ inputs:
   tag:
     description: 'Image tag - normally Github SHA'
     required: true
-  token: 
+  token:
     description: "Github token - normal PAT"
     required: true
-  source-repo: 
+  source-repo:
     description: 'Source repository for the image that was built'
     required: true
   labels:
@@ -59,9 +59,9 @@ runs:
             Related to https://github.com/${{ inputs.source-repo }}/commit/${{ inputs.tag }}
 
 
-            This PR is auto-generated. 
+            This PR is auto-generated.
         labels: ${{ inputs.labels }}
-        
+
     - uses: actions/checkout@v3
       with:
         path: ${{ github.repository }}
