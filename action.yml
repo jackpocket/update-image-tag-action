@@ -50,7 +50,7 @@ runs:
         for line in $lines; do
           IFS=',' read -r path image_name <<< "$line"
           cd ${{ github.workspace }}/infra/${{ inputs.path }}
-          kustomize edit set image "$image_name"="$image_name":${{ inputs.tag }}
+          kustomize edit set image "$image_name=$image_name":${{ inputs.tag }}
         done
 
     - name: Create Pull Request
