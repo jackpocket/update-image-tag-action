@@ -30,7 +30,7 @@ jobs:
           push: true
           tags: gcr.io/iamagcpproject/imanimagename:${{ github.sha }}
 
-  create_update_tag_pr_staging:
+  create_update_tag_pr:
     runs-on: ubuntu-latest
     needs: build_deploy_image
     steps:
@@ -40,13 +40,13 @@ jobs:
         with:
           app_id: ${{ secrets.YOUR_GITHUB_APP_ID }}
           private_key: ${{ secrets.YOUR_GITHUB_APP_PRIVATE_KEY }}
-      - uses: jackpocket/update-image-tag-action@v1
+      - uses: jackpocket/update-image-tag-action@v2
         with:
           token: ${{ steps.generate-token.outputs.token }}
-          branch: staging
           repo: organization/reponame
-          tag: ${{ needs.build.outputs.build-sha }}
-          path: k8s/path/to/folder # the directory path that contains the kustomiztion.yaml file
-          image-name: gcr.io/iamagcpproject/imanimagename
           source-repo: ${{ github.repository }}
+          tag: ${{ needs.build.outputs.build-sha }}
+          images: |-
+            k8s/services/my-app/production,gcr.io/org/my-app
+            k8s/services/my-app/staging,gcr.io/org/my-app
 ```
