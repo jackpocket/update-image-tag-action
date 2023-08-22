@@ -1,6 +1,6 @@
 # update-image-tag-action
 
-Github Action to update image tag in kustomiztion.yaml
+A GitHub Action to update image tags in multiple `kustomiztion.yaml` files.
 
 ## Example Usage
 
