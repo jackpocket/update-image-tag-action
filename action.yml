@@ -17,10 +17,10 @@ inputs:
         k8s/applications/my-app/staging,gcr.io/my-org/my-app
     required: true
   tag:
-    description: 'Image tag - normally Github SHA'
+    description: 'Image tag - normally the GitHub SHA'
     required: true
   token:
-    description: "Github token - normal PAT"
+    description: "GitHub token - a PAT or GitHub App generated token"
     required: true
   source-repo:
     description: 'Source repository for the image that was built'
