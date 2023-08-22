@@ -4,15 +4,17 @@ inputs:
   repo:
     description: 'Repository where kustomization.yaml exists'
     required: true
-  path:
-    description: 'Path in repository where kustomization.yaml resides'
-    required: true
   branch:
     description: 'Branch on the repository in which to apply the changes'
     required: true
     default: "main"
-  image-name:
-    description: 'Container image name'
+  images:
+    description: |
+      A multiline, comma delimited string where each line contains two values 1) the directory path to where the kustomization.yaml resides and 2) the image name. This supports multiple image updates in a single change request.
+
+      Example:
+        k8s/applications/my-app/production,gcr.io/my-org/my-app
+        k8s/applications/my-app/staging,gcr.io/my-org/my-app
     required: true
   tag:
     description: 'Image tag - normally Github SHA'
@@ -43,8 +45,13 @@ runs:
     - name: Kustomize
       shell: bash
       run: |
-        cd infra/${{ inputs.path }}
-        kustomize edit set image ${{ inputs.image-name }}=${{ inputs.image-name }}:${{ inputs.tag }}
+        IFS=$'\n'
+        lines="${{ inputs.images }}"
+        for line in $lines; do
+          IFS=',' read -r path image_name <<< "$line"
+          cd ${{ github.workspace }}/infra/${{ inputs.path }}
+          kustomize edit set image "$image_name"="$image_name":${{ inputs.tag }}
+        done
 
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v5
@@ -53,8 +60,8 @@ runs:
         token: ${{ inputs.token }}
         delete-branch: true
         branch-suffix: random
-        commit-message: Updating ${{ inputs.image }} tag to ${{ inputs.tag }}
-        title: "${{ inputs.image-name }} deployment to ${{ inputs.branch }} branch"
+        commit-message: Updating ${{ inputs.source-repo }} tag to ${{ inputs.tag }}
+        title: "${{ inputs.source-repo }} deployment"
         body: >
             Related to https://github.com/${{ inputs.source-repo }}/commit/${{ inputs.tag }}
 
