@@ -35,7 +35,7 @@ runs:
     - uses: imranismail/setup-kustomize@v2
 
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         token: ${{ inputs.token }}
         ref: ${{ inputs.branch }}
@@ -69,7 +69,7 @@ runs:
             This PR is auto-generated.
         labels: ${{ inputs.labels }}
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         path: ${{ github.repository }}
         fetch-depth: 0
