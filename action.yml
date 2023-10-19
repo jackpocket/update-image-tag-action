@@ -31,6 +31,8 @@ runs:
   using: "composite"
   steps:
     - uses: imranismail/setup-kustomize@v2
+      with:
+        kustomize-version: ${{ vars.UPDATE_IMAGE_TAG_ACTION_KUSTOMIZE_VERSION || '5.1.1' }}
 
     - name: Checkout
       uses: actions/checkout@v3
