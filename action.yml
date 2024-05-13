@@ -57,7 +57,7 @@ runs:
           IFS=',' read -r path image_name <<< "$line"
           cd "${{ github.workspace }}/infra/$path"
           if [ -f application-set-helm.yaml ]; then
-            yq '.spec.generators[0].list.elements[0].targetRevision = "${{ inputs.tag }}"' application-set-helm.yaml
+            yq -i '.spec.generators[0].list.elements[0].targetRevision = "${{ inputs.tag }}"' application-set-helm.yaml
           else
             kustomize edit set image "$image_name=$image_name":${{ inputs.tag }}
           fi
