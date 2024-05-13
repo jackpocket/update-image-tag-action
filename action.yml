@@ -51,8 +51,6 @@ runs:
     - name: Kustomize
       shell: bash
       run: |
-        wget https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY} -O /usr/bin/yq
-        chmod +x /usr/bin/yq
         IFS=$'\n'
         lines="${{ inputs.images }}"
         for line in $lines; do
