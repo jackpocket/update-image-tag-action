@@ -36,50 +36,53 @@ inputs:
 runs:
   using: "composite"
   steps:
-  - uses: imranismail/setup-kustomize@v2
-    with:
-      kustomize-version: ${{ inputs.kustomize-version }}
+    - uses: imranismail/setup-kustomize@v2
+      with:
+        kustomize-version: ${{ inputs.kustomize-version }}
 
-  - name: Checkout
-    uses: actions/checkout@v4
-    with:
-      token: ${{ inputs.token }}
-      ref: ${{ inputs.branch }}
-      repository: ${{ inputs.repo }}
-      path: infra
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        token: ${{ inputs.token }}
+        ref: ${{ inputs.branch }}
+        repository: ${{ inputs.repo }}
+        path: infra
 
-  - name: Kustomize
-    shell: bash
-    run: |
-      wget https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY} -O /usr/bin/yq
-      chmod +x /usr/bin/yq
-      IFS=$'\n'
-      lines="${{ inputs.images }}"
-      for line in $lines; do
-        IFS=',' read -r path image_name <<< "$line"
-        cd "${{ github.workspace }}/infra/$path"
-        if [ -f application-set-helm.yaml ]; then
-          yq '.spec.generators[0].list.elements[0].targetRevision = "${{ inputs.tag }}"' application-set-helm.yaml
-        else
-          kustomize edit set image "$image_name=$image_name":${{ inputs.tag }}
-        fi
-      done
+    - name: Kustomize
+      shell: bash
+      run: |
+        wget https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY} -O /usr/bin/yq
+        chmod +x /usr/bin/yq
+        IFS=$'\n'
+        lines="${{ inputs.images }}"
+        for line in $lines; do
+          IFS=',' read -r path image_name <<< "$line"
+          cd "${{ github.workspace }}/infra/$path"
+          if [ -f application-set-helm.yaml ]; then
+            yq '.spec.generators[0].list.elements[0].targetRevision = "${{ inputs.tag }}"' application-set-helm.yaml
+          else
+            kustomize edit set image "$image_name=$image_name":${{ inputs.tag }}
+          fi
+        done
 
-  - name: Create Pull Request
-    uses: peter-evans/create-pull-request@v6
-    with:
-      path: infra
-      token: ${{ inputs.token }}
-      delete-branch: true
-      branch-suffix: random
-      commit-message: Updating ${{ inputs.source-repo }} tag to ${{ inputs.tag }}
-      title: "${{ inputs.source-repo }} deployment"
-      body: >
-        Related to https://github.com/${{ inputs.source-repo }}/commit/${{ inputs.tag }} #magic___^_^___line #magic___^_^___line This PR is auto-generated.
-      labels: ${{ inputs.labels }}
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v6
+      with:
+        path: infra
+        token: ${{ inputs.token }}
+        delete-branch: true
+        branch-suffix: random
+        commit-message: Updating ${{ inputs.source-repo }} tag to ${{ inputs.tag }}
+        title: "${{ inputs.source-repo }} deployment"
+        body: >
+            Related to https://github.com/${{ inputs.source-repo }}/commit/${{ inputs.tag }}
 
-  - uses: actions/checkout@v4
-    with:
-      path: ${{ github.repository }}
-      fetch-depth: 0
-      clean: true
+
+            This PR is auto-generated.
+        labels: ${{ inputs.labels }}
+
+    - uses: actions/checkout@v4
+      with:
+        path: ${{ github.repository }}
+        fetch-depth: 0
+        clean: true
