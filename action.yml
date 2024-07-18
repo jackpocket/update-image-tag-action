@@ -71,7 +71,7 @@ runs:
         delete-branch: true
         branch-suffix: random
         commit-message: Updating ${{ inputs.source-repo }} tag to ${{ inputs.tag }}
-        title: "${{ inputs.source-repo }} deployment"
+        title: "${{ inputs.source-repo }} image tag deployment"
         body: >
             Related to https://github.com/${{ inputs.source-repo }}/commit/${{ inputs.tag }}
 
