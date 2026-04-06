@@ -18,14 +18,14 @@ jobs:
     outputs:
       build-sha: ${{ github.sha }}
     steps:
-      - uses: actions/checkout@v3
-      - uses: docker/login-action@v2
+      - uses: actions/checkout@v6
+      - uses: docker/login-action@v4
         with:
           registry: gcr.io
           username: _json_key
           password: ${{ secrets.YOUR_GCR_JSON_KEY }}
-      - uses: docker/setup-buildx-action@v2
-      - uses: docker/build-push-action@v3
+      - uses: docker/setup-buildx-action@v4
+      - uses: docker/build-push-action@v7
         with:
           push: true
           tags: gcr.io/iamagcpproject/imanimagename:${{ github.sha }}
@@ -34,12 +34,13 @@ jobs:
     runs-on: ubuntu-latest
     needs: build_deploy_image
     steps:
-      - uses: actions/checkout@v3
-      - uses: tibdex/github-app-token@v1
+      - uses: actions/checkout@v6
+      - uses: actions/create-github-app-token@v3
         id: generate-token
         with:
-          app_id: ${{ secrets.YOUR_GITHUB_APP_ID }}
-          private_key: ${{ secrets.YOUR_GITHUB_APP_PRIVATE_KEY }}
+          app-id: ${{ secrets.YOUR_GITHUB_APP_ID }}
+          private-key: ${{ secrets.YOUR_GITHUB_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
       - uses: jackpocket/update-image-tag-action@v2
         with:
           token: ${{ steps.generate-token.outputs.token }}
