@@ -36,7 +36,7 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - uses: imranismail/setup-kustomize@v2
+    - uses: imranismail/setup-kustomize@v3
       with:
         kustomize-version: ${{ inputs.kustomize-version }}
 
