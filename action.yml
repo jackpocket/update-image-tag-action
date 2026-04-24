@@ -32,7 +32,7 @@ inputs:
   kustomize-version:
     description: 'The kustomize version as allowed by the setup-kustomize action.'
     required: true
-    default: "5.1.1"
+    default: "5.8.1"
 runs:
   using: "composite"
   steps:
