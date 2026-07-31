@@ -2,6 +2,16 @@
 
 A GitHub Action to update image tags in multiple `kustomization.yaml` files.
 
+## Releasing New Version
+
+- [Open the "Draft a new release" form](https://github.com/jackpocket/update-image-tag-action/releases/new)
+- In the Tag drop down, enter and create the new tag version
+- Click the "Generate release notes" button
+- Ensure "Latest" is selected for the Release label
+- Now publish the release
+
+A few moments after publishing, [the tags list page](https://github.com/jackpocket/update-image-tag-action/tags) will show that the floating tag version (e.g. `v2`) and the `latest` tag will be updated (automatically) to point to the new release that was just published.
+
 ## Example Usage
 
 ```yaml
