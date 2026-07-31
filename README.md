@@ -1,6 +1,6 @@
 # update-image-tag-action
 
-A GitHub Action to update image tags in multiple `kustomiztion.yaml` files.
+A GitHub Action to update image tags in multiple `kustomization.yaml` files.
 
 ## Example Usage
 
@@ -18,7 +18,7 @@ jobs:
     outputs:
       build-sha: ${{ github.sha }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: docker/login-action@v4
         with:
           registry: gcr.io
@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build_deploy_image
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: actions/create-github-app-token@v3
         id: generate-token
         with:
